@@ -4,36 +4,40 @@ import gensim
 import pyLDAvis.gensim
 import numpy as np
 from sklearn.manifold import TSNE
-import matplotlib.colors as mcolors
 from collections import OrderedDict
+import matplotlib.pyplot as plt
 import pandas as pd
 
-
-# Bokeh
-from bokeh.io import output_notebook
-from bokeh.plotting import figure, show, save
-from bokeh.models import HoverTool, CustomJS, ColumnDataSource, Slider
-from bokeh.layouts import column
-from bokeh.palettes import all_palettes
-from bokeh.resources import INLINE
-output_notebook(INLINE)
+#ToDo: Make Interactive tSNE
+# # Bokeh
+# from bokeh.io import output_notebook
+# from bokeh.plotting import figure, show, save
+# from bokeh.models import HoverTool, CustomJS, ColumnDataSource, Slider
+# from bokeh.layouts import column
+# from bokeh.palettes import all_palettes
+# from bokeh.resources import INLINE
+# output_notebook(INLINE)
 
 
 no_of_topics = 20
 
 def main():
     global no_of_topics
-    # ToDo: LDA for Voc1 using BOW
+    # LDA for Voc1 using BOW
     vocabulary1 = gensim.corpora.Dictionary.load('vocabulary1.gensim')
     bow_voc1_corpus = pickle.load(open('bow_voc1_corpus.pkl', 'rb'))
-    # ldamodel1 = ldamodel(bow_voc1_corpus, num_topics=no_of_topics, id2word=vocabulary1, passes=15)
-    # ldamodel1.save('ldamodel1.gensim')
+    ldamodel1 = ldamodel(bow_voc1_corpus, num_topics=no_of_topics, id2word=vocabulary1, passes=15)
+    ldamodel1.save('ldamodel1.gensim')
 
     # ToDO: LDA for Voc2 using BOW
+    vocabulary2 = gensim.corpora.Dictionary.load('vocabulary2.gensim')
+    bow_voc2_corpus = pickle.load(open('bow_voc2_corpus.pkl', 'rb'))
+    ldamodel2 = ldamodel(bow_voc2_corpus, num_topics=no_of_topics, id2word=vocabulary2, passes=15)
+    ldamodel2.save('ldamodel2.gensim')
 
 
     # ToDo: TSNE for LDA Model 1
-    ldamodel1fortsne = ldamodel.load('bowldamodel.gensim')
+    ldamodel1fortsne = ldamodel.load('ldamodel1.gensim')
     top_dist = []
     keys = []
     for d in bow_voc1_corpus:
@@ -43,38 +47,58 @@ def main():
         top_dist += [vals]
         keys += [np.argmax(vals)]
 
-    tsne = TSNE(n_components=2)
+    tsne = TSNE(n_components=2,perplexity=50,early_exaggeration=15,learning_rate=500,n_iter=2000)
     X_tsne = tsne.fit_transform(top_dist)
-    # cluster_colors = {0:'#e6194b', 1:'#3cb44b', 2:'#ffe119', 3:'#4363d8', 4:'#f58231', 5:'#911eb4',
-    #                   6:'#46f0f0', 7:'#f032e6', 8:'#bcf60c', 9:'#fabebe', 10:'#008080',
-    #                   11:'#e6beff', 12:'#9a6324', 13:'#fffac8', 14:'#800000', 15:'#aaffc3',
-    #                   16:'#808000', 17:'#ffd8b1', 18:'#000075', 19:'#808080'}
-    # my_colors = pd.DataFrame(keys).apply(lambda l: cluster_colors[l])
-    plot = figure(title="t-SNE Clustering of {} LDA Topics".format(no_of_topics),
-                   plot_width=900, plot_height=700)
-    # ToDO: color
-    plot.scatter(x=X_tsne[:, 0], y=X_tsne[:, 1])
-    show(plot)
-    save(plot, '{}.html'.format("tSNE"))
 
-    # hm = np.array([[y for (x, y) in ldamodel1fortsne[bow_voc1_corpus[i]]] for i in range(len(bow_voc1_corpus))])
-    # tsne = TSNE(random_state=2017, perplexity=30, early_exaggeration=120)
-    # tsne_lda = tsne.fit_transform(hm)
-    # output_notebook()
-    # mycolors = np.array([color for name, color in mcolors.TABLEAU_COLORS.items()])
-    # plot = figure(title="t-SNE Clustering of {} LDA Topics".format(no_of_topics),
-    #               plot_width=900, plot_height=700)
-    # plot.scatter(x=tsne_lda[:, 0], y=tsne_lda[:, 1])  # color=mycolors[topic_num]
-    # show(plot)
+    plt.figure(figsize=(10, 10))
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=14)
+    plt.xlabel('tsne - 1', fontsize=20)
+    plt.ylabel('tsne - 2', fontsize=20)
+    plt.title("t-sne for LDA Model 1", fontsize=20)
+    plt.scatter(X_tsne[:, 0], X_tsne[:, 1],c=keys, cmap=plt.cm.tab20)
+    plt.show()
+    plt.savefig('tsne_ldamodel1.png')
+
+
 
     # ToDo: TSNE for LDA Model 2
+    ldamodel2fortsne = ldamodel.load('ldamodel2.gensim')
+    top_dist2 = []
+    keys2 = []
+    for d in bow_voc2_corpus:
+        tmp = {i: 0 for i in range(no_of_topics)}
+        tmp.update(dict(ldamodel2fortsne[d]))
+        vals = list(OrderedDict(tmp).values())
+        top_dist2 += [vals]
+        keys2 += [np.argmax(vals)]
+
+    tsne2 = TSNE(n_components=2, perplexity=50, early_exaggeration=15, learning_rate=500, n_iter=2000)
+    X_tsne2 = tsne2.fit_transform(top_dist2)
+
+    plt.figure(figsize=(10, 10))
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=14)
+    plt.xlabel('tsne - 1', fontsize=20)
+    plt.ylabel('tsne - 2', fontsize=20)
+    plt.title("t-sne for LDA Model 2", fontsize=20)
+    plt.scatter(X_tsne2[:, 0], X_tsne2[:, 1], c=keys2, cmap=plt.cm.tab20)
+    plt.show()
+    plt.savefig('tsne_ldamodel2.png')
 
     # ToDo: pyLDAVis for LDA Model 1
-    # ldamodel1forldavis = ldamodel.load('ldamodel1.gensim')
-    # bow_lda_display = pyLDAvis.gensim.prepare(ldamodel1forldavis, bow_voc1_corpus, vocabulary1, sort_topics=False)
-    # pyLDAvis.show(bow_lda_display)
+    ldamodel1forldavis = ldamodel.load('ldamodel1.gensim')
+    bow_lda1_display = pyLDAvis.gensim.prepare(ldamodel1forldavis, bow_voc1_corpus, vocabulary1, sort_topics=False)
+    pyLDAvis.save_html(bow_lda1_display, 'ldavis_ldamodel1.html')
+    pyLDAvis.show(bow_lda1_display)
 
-    # ToDo: pyLDAVis for LDA Model 2
+
+    # # ToDo: pyLDAVis for LDA Model 2
+    # ldamodel2forldavis = ldamodel.load('ldamodel2.gensim')
+    # bow_lda2_display = pyLDAvis.gensim.prepare(ldamodel2forldavis, bow_voc2_corpus, vocabulary2, sort_topics=False)
+    # pyLDAvis.save_html(bow_lda2_display, 'ldavis_ldamodel2.html')
+    # pyLDAvis.show(bow_lda2_display)
+
 
 if __name__ == '__main__':
     main()
