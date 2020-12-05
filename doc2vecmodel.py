@@ -6,6 +6,7 @@ import matplotlib.pyplot as plt
 
 def main():
     news_df = pd.read_pickle("news_df.pkl")
+    news_df2 = pd.read_pickle("news_df2.pkl")
     # # Doc2Vec Model - Vocab 1
     # documents = []
     # i = 0
@@ -60,29 +61,53 @@ def main():
 
     # ######################################
     # # doing word2vec for word embeddings
-    word2vecmodel_voc1 = Word2Vec(news_df['DocTokens'],
-                                  min_count=100,  # Ignore words that appear less than this
-                                  # size=200,      # Dimensionality of word embeddings
-                                  workers=4,  # Number of processors (parallelisation)
-                                  window=20,  # Context window for words during training
-                                  iter=30)  # Number of epochs training over corpus
+    # word2vecmodel_voc1 = Word2Vec(news_df['DocTokens'],
+    #                               min_count=100,  # Ignore words that appear less than this
+    #                               # size=200,      # Dimensionality of word embeddings
+    #                               workers=4,  # Number of processors (parallelisation)
+    #                               window=20,  # Context window for words during training
+    #                               iter=30)  # Number of epochs training over corpus
+    #
+    # word2vecmodel_voc1.save('word2vecmodel_voc1.model')  # saving word2vec for voc1
+    # tsne_model = TSNE(n_components=2,
+    #                   n_jobs=4,
+    #                   random_state=2018)
+    #
+    # tsne_w2v = word2vecmodel_voc1.wv[word2vecmodel_voc1.wv.vocab]
+    # X_tsne_w2v_1 = tsne_model.fit_transform(word2vecmodel_voc1.wv.vectors)
+    # plt.figure(figsize=(10, 10))
+    # plt.xticks(fontsize=12)
+    # plt.yticks(fontsize=14)
+    # plt.xlabel('tsne - 1', fontsize=20)
+    # plt.ylabel('tsne - 2', fontsize=20)
+    # plt.title("t-sne for Word2Vec Model 1", fontsize=20)
+    # plt.scatter(X_tsne_w2v_1[:, 0], X_tsne_w2v_1[:, 1])
+    # plt.savefig('tsne_word2vecmodel_1.png')
+    # plt.show()
 
-    word2vecmodel_voc1.save('word2vecmodel_voc1.model')  # saving word2vec for voc1
-    tsne_model = TSNE(n_components=2,
-                      n_jobs=4,
-                      random_state=2018)
-
-    tsne_w2v = word2vecmodel_voc1.wv[word2vecmodel_voc1.wv.vocab]
-    X_tsne_w2v_1 = tsne_model.fit_transform(tsne_w2v)
-    plt.figure(figsize=(10, 10))
-    plt.xticks(fontsize=12)
-    plt.yticks(fontsize=14)
-    plt.xlabel('tsne - 1', fontsize=20)
-    plt.ylabel('tsne - 2', fontsize=20)
-    plt.title("t-sne for Word2Vec Model 1", fontsize=20)
-    plt.scatter(X_tsne_w2v_1[:, 0], X_tsne_w2v_1[:, 1], c=news_df['Topic'], cmap=plt.cm.tab20)
-    plt.savefig('tsne_word2vecmodel_1.png')
-    plt.show()
+    # word2vecmodel_voc2 = Word2Vec(news_df2['DocTokens'],
+    #                               min_count=100,  # Ignore words that appear less than this
+    #                               # size=200,      # Dimensionality of word embeddings
+    #                               workers=4,  # Number of processors (parallelisation)
+    #                               window=20,  # Context window for words during training
+    #                               iter=30)  # Number of epochs training over corpus
+    #
+    # word2vecmodel_voc2.save('word2vecmodel_voc2.model')
+    # tsne_model2 = TSNE(n_components=2,
+    #                   n_jobs=4,
+    #                   random_state=2018)
+    #
+    # # tsne_w2v_2 = word2vecmodel_voc2.wv[word2vecmodel_voc2.wv.vocab]
+    # X_tsne_w2v_2 = tsne_model2.fit_transform(word2vecmodel_voc2.wv.vectors)
+    # plt.figure(figsize=(10, 10))
+    # plt.xticks(fontsize=12)
+    # plt.yticks(fontsize=14)
+    # plt.xlabel('tsne - 1', fontsize=20)
+    # plt.ylabel('tsne - 2', fontsize=20)
+    # plt.title("t-sne for Word2Vec Model 2", fontsize=20)
+    # plt.scatter(X_tsne_w2v_2[:, 0], X_tsne_w2v_2[:, 1])
+    # plt.savefig('tsne_word2vecmodel_2.png')
+    # plt.show()
 
 if __name__ == '__main__':
     main()
