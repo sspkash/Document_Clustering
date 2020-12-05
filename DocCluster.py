@@ -7,7 +7,7 @@ from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 import matplotlib.colors as mcolors
 from tabulate import tabulate
-import statistics
+import docstatistics
 import numpy as np
 import pandas as pd
 import pickle
@@ -69,7 +69,7 @@ def preprocess(news_corpus, stoplist):
     dictionary.save('dictionary.gensim')
 
     stats = [[no_of_docs, len(tokens), len(set(tokens)),
-                   min(wordsCount), max(wordsCount), statistics.mean(wordsCount), statistics.stdev(wordsCount)]]
+              min(wordsCount), max(wordsCount), docstatistics.mean(wordsCount), docstatistics.stdev(wordsCount)]]
     print(tabulate(stats, headers=["# of docs",
                                         "# of words", "# of unique words",
                                         "min words", "max words", "mean words", "std of words"]))
