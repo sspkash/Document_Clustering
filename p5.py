@@ -18,7 +18,7 @@ def main():
     vectorizer = TfidfVectorizer(stop_words='english')
     X = vectorizer.fit_transform(news_corpus.data)
     print(X.shape)
-    print(news_corpus.data)
+    # print(news_corpus.data)
     # vectorizer2 = CountVectorizer(stop_words='english')
     # X2 = vectorizer2.fit_transform(news_corpus.data)
     # print(X2.shape)
@@ -35,28 +35,28 @@ def main():
     # # print(nmi_score2)
     # # data = news_corpus.data
     # # labels = news_corpus.target
-    # pca = TruncatedSVD(n_components=2)
-    # principalComponents = pca.fit_transform(X)
+    pca = TruncatedSVD(n_components=2)
+    principalComponents = pca.fit_transform(X)
 
-    # plt.figure(figsize=(10, 10))
-    # plt.xticks(fontsize=12)
-    # plt.yticks(fontsize=14)
-    # plt.xlabel('tsne - 1', fontsize=20)
-    # plt.ylabel('tsne - 2', fontsize=20)
-    # plt.title("t-sne for LDA Model 1", fontsize=20)
-    # # clusters = unique(y_model)
-    # # # create scatter plot for samples from each cluster
-    # # for cluster in clusters:
-    # #     # get row indexes for samples with this cluster
-    # #     row_ix = where(y_model == cluster)
-    # #     # create scatter of these samples
-    # #     plt.scatter(news_corpus.dat[row_ix, 0], news_corpus.data[row_ix, 1])
+    plt.figure(figsize=(10, 10))
+    plt.xticks(fontsize=12)
+    plt.yticks(fontsize=14)
+    plt.xlabel('tsne - 1', fontsize=20)
+    plt.ylabel('tsne - 2', fontsize=20)
+    plt.title("t-sne for LDA Model 1", fontsize=20)
+    # clusters = unique(y_model)
+    # # create scatter plot for samples from each cluster
+    # for cluster in clusters:
+    #     # get row indexes for samples with this cluster
+    #     row_ix = where(y_model == cluster)
+    #     # create scatter of these samples
+    #     plt.scatter(news_corpus.dat[row_ix, 0], news_corpus.data[row_ix, 1])
     # # show the plot
     #
-    # plt.scatter(principalComponents[:, 0], principalComponents[:, 1], c=news_corpus.target[:], cmap=plt.cm.tab20)
+    plt.scatter(principalComponents[:, 0], principalComponents[:, 1], c=news_corpus.target[:], cmap=plt.cm.tab20)
     # #plt.scatter(X[:, 0], X[:, 1])
     # # plt.savefig('tsne_ldamodel1.png')
-    # plt.show()
+    plt.show()
 
 if __name__ == '__main__':
     main()
