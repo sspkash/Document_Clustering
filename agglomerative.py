@@ -1,4 +1,4 @@
-from sklearn.cluster import KMeans
+from sklearn.cluster import AgglomerativeClustering, MiniBatchKMeans, SpectralClustering, DBSCAN, AffinityPropagation
 from sklearn.feature_extraction.text import CountVectorizer, TfidfVectorizer
 from nltk.tokenize.treebank import TreebankWordDetokenizer
 from sklearn.metrics.cluster import normalized_mutual_info_score
@@ -11,7 +11,7 @@ from sklearn.manifold import TSNE
 import matplotlib.pyplot as plt
 from sklearn.decomposition import TruncatedSVD
 from collections import OrderedDict
-
+from scipy.sparse import csr_matrix
 
 def main():
     news_df = pd.read_pickle("news_df.pkl")
@@ -20,8 +20,8 @@ def main():
     bow_vectorizer = CountVectorizer()
     X_bow = bow_vectorizer.fit_transform(detokens)
     print(X_bow.shape)
-    km_bow = KMeans(n_clusters=20, init='k-means++', max_iter=100, n_init=1)
-    y_bow = km_bow.fit_predict(X_bow)
+    km_bow = AgglomerativeClustering(n_clusters=no_of_topics)
+    y_bow = km_bow.fit_predict(X_bow.todense())
     print(len(y_bow))
     nmi_score = normalized_mutual_info_score(news_df['Topic'], y_bow)
     print(nmi_score)
@@ -32,7 +32,7 @@ def main():
     tfidf_vectorizer = TfidfVectorizer()
     X_tfidf = tfidf_vectorizer.fit_transform(detokens)
     print(X_tfidf.shape)
-    km_tfidf = KMeans(n_clusters=20, init='k-means++', max_iter=100, n_init=1)
+    km_tfidf = MiniBatchKMeans(n_clusters=no_of_topics)
     y_tfdif = km_tfidf.fit_predict(X_tfidf)
     print(len(y_tfdif))
     nmi_score = normalized_mutual_info_score(news_df['Topic'], y_tfdif)
@@ -64,7 +64,7 @@ def main():
                 topic = x
         predict_topics.append(topic)
 
-    km_topic_dist = KMeans(n_clusters=20, init='k-means++', max_iter=100, n_init=1)
+    km_topic_dist = AgglomerativeClustering(n_clusters=no_of_topics)
     y_topic_dist = km_topic_dist.fit_predict(np.array(predict_topics).reshape(-1, 1))
     print(len(y_topic_dist))
     nmi_score = normalized_mutual_info_score(news_df['Topic'], y_topic_dist)
@@ -82,24 +82,24 @@ def main():
 
     doc2vec_model_1 = Doc2Vec.load('doc2vec_voc1.model')
     X_doc2vec = doc2vec_model_1.docvecs.vectors_docs
-    km_doc2vec = KMeans(n_clusters=20, init='k-means++', max_iter=100, n_init=1)
+    km_doc2vec = AgglomerativeClustering(n_clusters=no_of_topics)
     y_doc2vec = km_doc2vec.fit_predict(X_doc2vec)
     print(len(y_doc2vec))
     nmi_score = normalized_mutual_info_score(news_df['Topic'], y_doc2vec)
     print(nmi_score)
 
-    tsne = TSNE(n_components=2, perplexity=50, early_exaggeration=15, learning_rate=500, n_iter=2000)
-    X_tsne = tsne.fit_transform(X_doc2vec)
-    plt.figure(figsize=(10, 10))
-    plt.xticks(fontsize=12)
-    plt.yticks(fontsize=14)
-    plt.xlabel('tsne - 1', fontsize=20)
-    plt.ylabel('tsne - 2', fontsize=20)
-    plt.title("t-sne for LDA Model 1", fontsize=20)
-    plt.scatter(X_tsne[:, 0], X_tsne[:, 1], c=y_doc2vec, cmap=plt.cm.tab20)
-    plt.legend(loc='best')
-    plt.savefig('clustering_ldamodel1.png')
-    plt.show()
+    # tsne = TSNE(n_components=2, perplexity=50, early_exaggeration=15, learning_rate=500, n_iter=2000)
+    # X_tsne = tsne.fit_transform(X_doc2vec)
+    # plt.figure(figsize=(10, 10))
+    # plt.xticks(fontsize=12)
+    # plt.yticks(fontsize=14)
+    # plt.xlabel('tsne - 1', fontsize=20)
+    # plt.ylabel('tsne - 2', fontsize=20)
+    # plt.title("t-sne for LDA Model 1", fontsize=20)
+    # plt.scatter(X_tsne[:, 0], X_tsne[:, 1], c=y_doc2vec, cmap=plt.cm.tab20)
+    # plt.legend(loc='best')
+    # plt.savefig('clustering_ldamodel1.png')
+    # plt.show()
 
 
 if __name__ == '__main__':
